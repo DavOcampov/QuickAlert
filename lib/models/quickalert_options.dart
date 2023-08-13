@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:quickalert/models/quickalert_animtype.dart';
@@ -65,12 +66,24 @@ class QuickAlertOptions {
 
   /// Width of the dialog
   double? width;
- 
- Timer? timer;
+
+  //timer for dismissing dialog
+  Timer? timer;
+
+  /// Closing back button
+  bool? onWillPop;
+
+  /// Button Border Radius
+  double? borderRadiusButton;
+
+  /// Create an image filter
+  ImageFilter? backdropFilter;
+
   /// Alert Options
   QuickAlertOptions({
     /// Title of the dialog
     this.title,
+
     /// Text of the dialog
     this.text,
 
@@ -130,5 +143,14 @@ class QuickAlertOptions {
 
     //timer for dismissing dialog (Ok button)
     this.timer,
+
+    ///Prevent closing dialog with physical back button
+    this.onWillPop,
+
+    /// Button Border Radius
+    this.borderRadiusButton,
+
+    /// Create an image filter for the dialog background
+    this.backdropFilter,
   });
 }

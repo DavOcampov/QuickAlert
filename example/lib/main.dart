@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -37,7 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
           context: context,
           type: QuickAlertType.success,
           text: 'Transaction Completed Successfully!',
-          autoCloseDuration: const Duration(seconds: 2),
+          autoCloseDuration: const Duration(seconds: 4),
+          borderRadiusButton: 10.0,
+          backdropFilter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
         );
       },
       title: 'Success',
@@ -161,6 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             Navigator.pop(context);
             await Future.delayed(const Duration(milliseconds: 1000));
+            if (!mounted) return;
             await QuickAlert.show(
               context: context,
               type: QuickAlertType.success,

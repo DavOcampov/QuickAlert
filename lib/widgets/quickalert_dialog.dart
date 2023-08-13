@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:quickalert/models/quickalert_animtype.dart';
 import 'package:quickalert/models/quickalert_options.dart';
@@ -78,46 +79,63 @@ class QuickAlert {
 
     /// Determines how long the dialog stays open for before closing, [default] is null. When it is null, it won't auto close
     Duration? autoCloseDuration,
+
+    /// Avoid closing the dialog with the physical back button
+    bool onWillPop = true,
+
+    /// Button Border Radius
+    double borderRadiusButton = 15.0,
+
+    /// Create an image filter for the dialog background
+    ImageFilter? backdropFilter,
   }) {
-    var timer;
+    Timer? timer;
     if (autoCloseDuration != null) {
-      timer =
-      Timer(autoCloseDuration, () {
+      timer = Timer(autoCloseDuration, () {
         Navigator.of(context, rootNavigator: true).pop();
       });
     }
 
     final options = QuickAlertOptions(
-      timer:timer,
-      title: title,
-      text: text,
-      widget: widget,
-      type: type,
-      animType: animType,
-      barrierDismissible: barrierDismissible,
-      onConfirmBtnTap: onConfirmBtnTap,
-      onCancelBtnTap: onCancelBtnTap,
-      confirmBtnText: confirmBtnText,
-      cancelBtnText: cancelBtnText,
-      confirmBtnColor: confirmBtnColor,
-      confirmBtnTextStyle: confirmBtnTextStyle,
-      cancelBtnTextStyle: cancelBtnTextStyle,
-      backgroundColor: backgroundColor,
-      titleColor: titleColor,
-      textColor: textColor,
-      showCancelBtn: showCancelBtn,
-      borderRadius: borderRadius,
-      customAsset: customAsset,
-      width: width,
-    );
+        timer: timer,
+        title: title,
+        text: text,
+        widget: widget,
+        type: type,
+        animType: animType,
+        barrierDismissible: barrierDismissible,
+        onConfirmBtnTap: onConfirmBtnTap,
+        onCancelBtnTap: onCancelBtnTap,
+        confirmBtnText: confirmBtnText,
+        cancelBtnText: cancelBtnText,
+        confirmBtnColor: confirmBtnColor,
+        confirmBtnTextStyle: confirmBtnTextStyle,
+        cancelBtnTextStyle: cancelBtnTextStyle,
+        backgroundColor: backgroundColor,
+        titleColor: titleColor,
+        textColor: textColor,
+        showCancelBtn: showCancelBtn,
+        borderRadius: borderRadius,
+        customAsset: customAsset,
+        width: width,
+        borderRadiusButton: borderRadiusButton);
 
-    final child = AlertDialog(
-      contentPadding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      content: QuickAlertContainer(
-        options: options,
+    final child = WillPopScope(
+      onWillPop: () async {
+        if (onWillPop) timer?.cancel();
+        return onWillPop;
+      },
+      child: BackdropFilter(
+        filter: backdropFilter ?? ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+        child: AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          content: QuickAlertContainer(
+            options: options,
+          ),
+        ),
       ),
     );
 
